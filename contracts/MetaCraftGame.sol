@@ -636,6 +636,7 @@ interface IMetaCraft {
 
     function summon(uint _class) external;
     function adventure(uint _summoner) external;
+    function adventure_all(uint[] memory _summoners) external;
     function level_up(uint _summoner) external;
     function spend_xp(uint _summoner, uint _xp) external;
 
@@ -673,6 +674,16 @@ contract MetaCraft is ERC721Enumerable,IMetaCraft {
         require(block.timestamp > adventurers_log[_summoner]);
         adventurers_log[_summoner] = block.timestamp + DAY;
         xp[_summoner] += xp_per_day;
+    }
+
+    function adventure_all(uint[] memory _summoners) external override {
+        for (uint i = 0; i < _summoners.length; i++) {
+            uint _summoner = _summoners[i];
+            require(_isApprovedOrOwner(msg.sender, _summoner));
+            require(block.timestamp > adventurers_log[_summoner]);
+            adventurers_log[_summoner] = block.timestamp + DAY;
+            xp[_summoner] += xp_per_day;
+        }
     }
 
     function spend_xp(uint _summoner, uint _xp) external override {
